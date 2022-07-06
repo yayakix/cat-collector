@@ -1,5 +1,11 @@
-from django.shortcuts import render
 
+from django.shortcuts import render
+# Add the following import
+from django.views.generic.edit import CreateView
+from .models import Cat
+
+# Add UdpateView & DeleteView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
 # Add the following import
 from django.http import HttpResponse
 
@@ -10,21 +16,31 @@ def home(request):
 def about(request):
   return render(request, 'about.html')
 
-# Add new view
 
-# Add the Cat class & list and view function below the imports
-class Cat:  # Note that parens are optional if not inheriting from another class
-  def __init__(self, name, breed, description, age):
-    self.name = name
-    self.breed = breed
-    self.description = description
-    self.age = age
-
-cats = [
-  Cat('Lolo', 'tabby', 'foul little demon', 3),
-  Cat('Sachi', 'tortoise shell', 'diluted tortoise shell', 0),
-  Cat('Raven', 'black tripod', '3 legged cat', 4)
-]
 
 def cats_index(request):
-  return render(request, 'cats/index.html', { 'cats': cats })
+    cats = Cat.objects.all()
+    return render(request, 'cats/index.html', { 'cats': cats })
+
+
+
+def cats_detail(request, cat_id):
+  cat = Cat.objects.get(id=cat_id)
+  return render(request, 'cats/detail.html', { 'cat': cat })
+
+
+
+class CatCreate(CreateView):
+  model = Cat
+  fields = '__all__'
+  success_url = '/cats/'
+
+
+class CatUpdate(UpdateView):
+  model = Cat
+  # Let's disallow the renaming of a cat by excluding the name field!
+  fields = ['breed', 'description', 'age']
+
+class CatDelete(DeleteView):
+  model = Cat
+  success_url = '/cats/'
