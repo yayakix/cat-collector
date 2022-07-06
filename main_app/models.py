@@ -10,27 +10,32 @@ MEALS = (
 )
 
 class Cat(models.Model):
-  name = models.CharField(max_length=100)
-  breed = models.CharField(max_length=100)
-  description = models.TextField(max_length=250)
-  age = models.IntegerField()
-
-  def __str__(self):
-    return self.name
-
-  # Add this method
-  def get_absolute_url(self):
-    return reverse('detail', kwargs={'cat_id': self.id})
+    name = models.CharField(max_length=100)
+    breed = models.CharField(max_length=100)
+    description = models.TextField(max_length=250)
+    age = models.IntegerField()
+    def __str__(self):
+        return self.name
+    def get_absolute_url(self):
+        return reverse('detail', kwargs={'cat_id': self.id})
 
 
-# Add new Feeding model below Cat model
+cat = models.ForeignKey(Cat, on_delete=models.CASCADE)
+
 
 class Feeding(models.Model):
-  date = models.DateField()
-  meal = models.CharField(
-    max_length=1,
-    # add the 'choices' field option
-    choices=MEALS,
-    # set the default value for meal to be 'B'
-    default=MEALS[0][0]
-  )
+    date = models.DateField('feeding date')
+    meal = models.CharField(
+        max_length=1, 
+        choices=MEALS, 
+        default=MEALS[0][0]
+        )
+    def __str__(self):
+        return f"{self.get_meal_display()} on {self.date}"
+    
+
+
+# class Meta:
+#     ordering = ['-date']
+
+
