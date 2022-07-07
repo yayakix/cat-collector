@@ -19,10 +19,6 @@ class Cat(models.Model):
     def get_absolute_url(self):
         return reverse('detail', kwargs={'cat_id': self.id})
 
-
-cat = models.ForeignKey(Cat, on_delete=models.CASCADE)
-
-
 class Feeding(models.Model):
     date = models.DateField('feeding date')
     meal = models.CharField(
@@ -30,12 +26,14 @@ class Feeding(models.Model):
         choices=MEALS, 
         default=MEALS[0][0]
         )
+    cat = models.ForeignKey(Cat, on_delete=models.CASCADE)
     def __str__(self):
         return f"{self.get_meal_display()} on {self.date}"
     
+    class Meta:
+        ordering = ['-date']
 
+    
 
-# class Meta:
-#     ordering = ['-date']
 
 
